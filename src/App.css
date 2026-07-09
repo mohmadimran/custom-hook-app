@@ -1,38 +1,342 @@
-.App {
-  text-align: center;
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 100%);
+    min-height: 100vh;
+    color: #1a2a3a;
+    line-height: 1.6;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
+/* ----- main container ----- */
+.posts-app {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+/* ----- header with gradient accent ----- */
+.page-header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2a5a7a 100%);
+    color: white;
+    padding: 32px 40px;
+    border-radius: 20px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(26, 58, 92, 0.25);
+    position: relative;
+    overflow: hidden;
 }
 
-.App-link {
-  color: #61dafb;
+.page-header::before {
+    content: "📝";
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 4rem;
+    opacity: 0.15;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.page-title {
+    font-size: 2.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+}
+
+.page-subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    opacity: 0.85;
+    letter-spacing: 0.3px;
+}
+
+/* ----- loading state ----- */
+.loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    gap: 20px;
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid #e2e8f0;
+    border-top: 4px solid #1a3a5c;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: #4a5f74;
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* ----- error state ----- */
+.error-state {
+    background: #fff5f5;
+    border-left: 5px solid #e53e3e;
+    padding: 24px 28px;
+    border-radius: 12px;
+    margin: 40px 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 4px 12px rgba(229, 62, 62, 0.1);
+}
+
+.error-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+}
+
+.error-message {
+    font-size: 1.1rem;
+    color: #742a2a;
+    font-weight: 500;
+}
+
+.error-detail {
+    color: #9b4a4a;
+    font-weight: 400;
+    margin-left: 8px;
+}
+
+/* ----- posts grid (masonry-like) ----- */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 8px;
+}
+
+/* ----- individual post card (modern, elevated) ----- */
+.post-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 24px 26px 28px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06), 0 1px 4px rgba(0, 0, 0, 0.02);
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    position: relative;
+    overflow: hidden;
+}
+
+.post-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1a3a5c, #3a7a9a, #1a3a5c);
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.post-card:hover::before {
+    opacity: 1;
+    animation: shimmer 2s linear infinite;
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+.post-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08), 0 6px 16px rgba(0, 0, 0, 0.04);
+    border-color: #dce3ec;
+}
+
+.post-id-badge {
+    position: absolute;
+    top: 12px;
+    right: 16px;
+    background: #eef2f7;
+    color: #4a5f74;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 40px;
+    letter-spacing: 0.5px;
+    border: 1px solid #dce3ec;
+}
+
+.post-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0b1a2b;
+    margin-bottom: 12px;
+    padding-right: 50px;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+}
+
+.post-title::first-letter {
+    text-transform: uppercase;
+}
+
+.post-body {
+    color: #4a5f74;
+    font-size: 0.95rem;
+    line-height: 1.7;
+    margin-bottom: 16px;
+}
+
+.post-body::first-letter {
+    text-transform: uppercase;
+}
+
+.post-meta {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding-top: 14px;
+    border-top: 2px solid #f0f4f8;
+    font-size: 0.85rem;
+    color: #7a8fa4;
+}
+
+.post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.post-meta-item svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* ----- responsive adjustments ----- */
+@media (max-width: 768px) {
+    .posts-app {
+        padding: 24px 16px 40px;
+    }
+
+    .page-header {
+        padding: 24px 28px;
+        border-radius: 16px;
+    }
+
+    .page-header::before {
+        font-size: 3rem;
+        right: 20px;
+    }
+
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .posts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .post-card {
+        padding: 20px 20px 24px;
+    }
+
+    .post-title {
+        font-size: 1.1rem;
+        padding-right: 40px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 20px 20px;
+    }
+
+    .page-header::before {
+        display: none;
+    }
+
+    .page-title {
+        font-size: 1.6rem;
+    }
+
+    .page-subtitle {
+        font-size: 0.9rem;
+    }
+
+    .post-card {
+        padding: 16px 16px 20px;
+        border-radius: 12px;
+    }
+
+    .post-title {
+        font-size: 1rem;
+        padding-right: 0;
+        margin-top: 4px;
+    }
+
+    .post-id-badge {
+        position: relative;
+        top: auto;
+        right: auto;
+        display: inline-block;
+        margin-bottom: 8px;
+        font-size: 0.7rem;
+        padding: 2px 10px;
+    }
+
+    .post-body {
+        font-size: 0.9rem;
+    }
+
+    .loading-spinner {
+        width: 48px;
+        height: 48px;
+    }
+
+    .error-state {
+        flex-direction: column;
+        text-align: center;
+        padding: 20px;
+    }
+
+    .error-icon {
+        font-size: 2.5rem;
+    }
+}
+
+/* ----- optional: scrollbar styling for modern feel ----- */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f0f4f8;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #bcc8d6;
+    border-radius: 40px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #a0b0c4;
 }
